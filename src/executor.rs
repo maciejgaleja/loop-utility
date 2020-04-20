@@ -2,8 +2,8 @@ use std::process::Command;
 use std::thread;
 use std::time;
 
-pub fn run_with_delay(delay: time::Duration) {
-    let mut cmd = Command::new("date");
+pub fn run_with_delay(delay: time::Duration, command: Vec<String>) {
+    let mut cmd = Command::new(&command[0]);
     loop {
         let res: Vec<u8> = cmd.output().expect("Error while executing command").stdout;
         print!("{}", std::str::from_utf8(&res).unwrap());
