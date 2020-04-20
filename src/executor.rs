@@ -12,6 +12,6 @@ pub fn run_with_delay(delay: time::Duration, command: Vec<String>) {
 }
 
 pub fn run_every(period: time::Duration) {
-    println!("Running every")
+    println!("Running every {:?}", period)
     // let now = time::Instant::now();
 }
