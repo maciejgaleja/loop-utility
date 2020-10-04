@@ -18,7 +18,13 @@ pub fn run_every(period: time::Duration, command: Vec<String>) {
 }
 
 fn run_command(command: &Vec<String>) {
-    let mut cmd = Command::new(&command[0]);
+    let program = &command[0];
+    let args = &command[1..];
+    println!("{:?}, {:?}", program, args);
+    let mut cmd = Command::new(program);
+    if args.len() > 0 {
+        cmd.args(args);
+    }
     let res: Vec<u8> = cmd.output().expect("Error while executing command").stdout;
     print!("{}", std::str::from_utf8(&res).unwrap());
 }
