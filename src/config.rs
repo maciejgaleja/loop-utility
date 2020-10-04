@@ -1,5 +1,7 @@
 use std::time;
 
+use structopt::StructOpt;
+
 pub enum Timing {
     Every(time::Duration),
     Delay(time::Duration),
@@ -10,34 +12,26 @@ pub struct Config {
     pub command: Vec<String>,
 }
 
-impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        let args = Config::get_arguments(args);
-        println!("{:?}", args.0);
+#[derive(StructOpt)]
+struct Cli {
+    loop_type: String,
+    time_spec: String,
+}
 
-        Ok(Config {
-            timing: Timing::Delay(time::Duration::from_millis(1000)),
-            command: args.1,
-        })
+impl Config {
+    pub fn new(args: &[String]) -> Result<Timing, &'static str> {
+        let parsed_args = Cli::from_iter(args);
+
+        let millis = (parsed_args.time_spec.parse::<f32>().unwrap() * 1000.0) as u64;
+
+        match &parsed_args.loop_type[..] {
+            "every" => Ok(Timing::Every(time::Duration::from_millis(millis))),
+            "delay" => Ok(Timing::Delay(time::Duration::from_millis(millis))),
+            _ => Err("invalid loop type"),
+        }
     }
 
-    fn get_arguments(args: &[String]) -> (Vec<String>, Vec<String>) {
-        let mut options = Vec::new();
-        let mut command = Vec::new();
-
-        let mut cmd_begin: bool = false;
-        for arg in args {
-            if arg == "--" {
-                cmd_begin = true;
-            } else {
-                if cmd_begin {
-                    command.push(arg.clone());
-                } else {
-                    options.push(arg.clone());
-                }
-            }
-        }
-
-        (options, command)
+    pub fn print_help() {
+        Cli::clap().print_help();
     }
 }

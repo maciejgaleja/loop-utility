@@ -1,19 +1,28 @@
 extern crate loop_utility;
 
+use loop_utility::arg_separator;
 use loop_utility::config::Config;
 use loop_utility::config::Timing;
+use loop_utility::executor;
 
 use std::env;
 
-use loop_utility::executor;
-
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    let cli_args: Vec<String> = env::args().collect();
 
-    let config = Config::new(&args).unwrap();
+    let (args, cmd) = arg_separator::split_args(&cli_args);
 
-    match config.timing {
-        Timing::Delay(tm) => executor::run_with_delay(tm, config.command),
-        Timing::Every(tm) => executor::run_every(tm),
-    }
+    println!("{:?}", args);
+
+    let timing = Config::new(&args);
+    match timing {
+        Ok(timing) => match timing {
+            Timing::Delay(tm) => executor::run_with_delay(tm, cmd),
+            Timing::Every(tm) => executor::run_every(tm),
+        },
+        Err(msg) => {
+            println!("{}", msg);
+            Config::print_help()
+        }
+    };
 }
