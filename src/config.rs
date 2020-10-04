@@ -32,6 +32,6 @@ impl Config {
     }
 
     pub fn print_help() {
-        Cli::clap().print_help();
+        let _ = Cli::clap().print_help();
     }
 }

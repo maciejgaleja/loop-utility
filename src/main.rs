@@ -18,7 +18,7 @@ fn main() {
     match timing {
         Ok(timing) => match timing {
             Timing::Delay(tm) => executor::run_with_delay(tm, cmd),
-            Timing::Every(tm) => executor::run_every(tm),
+            Timing::Every(tm) => executor::run_every(tm, cmd),
         },
         Err(msg) => {
             println!("{}", msg);
